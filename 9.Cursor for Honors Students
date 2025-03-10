@@ -1,0 +1,30 @@
+DECLARE
+    CURSOR honors_cursor IS
+        SELECT roll_no, name, s1 + s2 AS total_grade
+        FROM students
+        WHERE s1 + s2 > 12
+        ORDER BY roll_no;
+    
+    v_max_grade NUMBER := 0;
+    v_student honors_cursor%ROWTYPE;
+BEGIN
+    OPEN honors_cursor;
+    LOOP
+        FETCH honors_cursor INTO v_student;
+        EXIT WHEN honors_cursor%NOTFOUND;
+
+        -- Print student details
+        DBMS_OUTPUT.PUT_LINE('Roll No: ' || v_student.roll_no || ', Name: ' || v_student.name || ', Total Grade: ' || v_student.total_grade);
+
+        -- Find the highest grade
+        IF v_student.total_grade > v_max_grade THEN
+            v_max_grade := v_student.total_grade;
+        END IF;
+    END LOOP;
+    
+    -- Print highest grade
+    DBMS_OUTPUT.PUT_LINE('Highest Grade: ' || v_max_grade);
+
+    CLOSE honors_cursor;
+END;
+/
