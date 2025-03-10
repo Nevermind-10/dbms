@@ -1,0 +1,37 @@
+DECLARE
+    v_cust_no NUMBER;
+    v_prev_reading NUMBER;
+    v_curr_reading NUMBER;
+    v_units NUMBER;
+    v_bill NUMBER := 0;
+
+    -- Cursor for fetching consumer details
+    CURSOR c_consumer IS
+        SELECT consumer_no, past_reading, present_reading FROM consumers;
+
+BEGIN
+    OPEN c_consumer;
+    LOOP
+        FETCH c_consumer INTO v_cust_no, v_prev_reading, v_curr_reading;
+        EXIT WHEN c_consumer%NOTFOUND;
+
+        v_units := v_curr_reading - v_prev_reading;
+
+        -- Calculate bill based on unit slabs
+        IF v_units <= 100 THEN
+            v_bill := v_units * 5;
+        ELSIF v_units <= 300 THEN
+            v_bill := (100 * 5) + ((v_units - 100) * 7.5);
+        ELSIF v_units <= 500 THEN
+            v_bill := (100 * 5) + (200 * 7.5) + ((v_units - 300) * 15);
+        ELSE
+            v_bill := (100 * 5) + (200 * 7.5) + (200 * 15) + ((v_units - 500) * 22.5);
+        END IF;
+
+        -- Print the bill
+        DBMS_OUTPUT.PUT_LINE('Consumer No: ' || v_cust_no || ' | Units: ' || v_units || ' | Bill: ' || v_bill);
+    END LOOP;
+
+    CLOSE c_consumer;
+END;
+/
