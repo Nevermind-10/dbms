@@ -1,0 +1,25 @@
+DECLARE
+    v_avg_marks NUMBER;
+    v_date VARCHAR2(20);
+    v_day VARCHAR2(10);
+BEGIN
+    -- Calculate the average marks
+    SELECT AVG(marks) INTO v_avg_marks FROM students;
+
+    -- Print marks of each student
+    FOR rec IN (SELECT roll_no, marks FROM students) LOOP
+        DBMS_OUTPUT.PUT_LINE('Roll No: ' || rec.roll_no || ', Marks: ' || rec.marks);
+    END LOOP;
+
+    -- Print message if needed
+    IF v_avg_marks < 40 THEN
+        DBMS_OUTPUT.PUT_LINE('Need Improvement');
+    END IF;
+
+    -- Retrieve and print current date and day
+    SELECT TO_CHAR(SYSDATE, 'DD-MON-YYYY'), TO_CHAR(SYSDATE, 'DAY') 
+    INTO v_date, v_day FROM dual;
+
+    DBMS_OUTPUT.PUT_LINE('Date: ' || v_date || ' (' || v_day || ')');
+END;
+/
